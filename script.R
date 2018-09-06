@@ -91,25 +91,37 @@ rm(result_example)
 # The first time you use a package you have to install it. After that,
 # it's a good practice to just comment out these lines.
 install.packages("tidyverse") # Collection of useful packages I always load
-install.packages("caTools") # I'll use this to split the dataset into test/train
 
 # You also have to "load" the package into your active R session. You must
 # do this every time you start R. This is kind of a pain in the butt to do
 # manually, so just remember to always include a set of library calls
 # for all packages you use in the script.
 library("tidyverse")
-library("caTools")
 library("haven") # haven installs with tidyverse, but you have to load it separately.
 # Haven is used for reading spss/sas/stata data.
 
 # Let's load a sample dataset. Here, we're assigning the result of the read_sav()
-# call to the object 'data'. In this case, read_sav() is reading in a .sav file
+# call to the object 'data'. read_sav() function reads in a .sav file
 # from SPSS. Inside read_sav we simply put the relative location of the dataset.
 # In this case, it's contained under a subdirectory called "data".
-data <- read_sav()
+data <- read_sav("./data/raceiat_2017.sav")
+
+# I'm going to subset to remove incomplete sessions for simplicity
+data <- subset(data, session_status == "C")
+
+# These are publicly available data from the Race IAT on Project Implicit.
+# From here: https://osf.io/gwofk/ however to save space I took only the 
+# first 5000 rows.
 
 # We can do just a little inspection of this data to get a feel for it:
 glimpse(data)
+
+# If these data don't make sense, there is also a codebook in the folder
+# For the moment, key variables to consider:
+# D_biep.White_Good_all = participant IAT score. Higher=greater preference 
+# for white people.
+# att7 = explicit item asking racial preference. Higher = greater preference
+# for white people.
 
 ## Holdout dataset (or "split-halves") approach
 # Here, we're simply trying to randomly split the data into a 'train' dataset
@@ -122,13 +134,54 @@ glimpse(data)
 # test how sensitive your particular randomization is. 
 set.seed(1)
 
-# Here's a simple method to randomize train and test samples using the
-# caTools package:
+# Here's a simple method to randomize train and test samples. This
+# exact method is the one DataCamp recommends, but there are dozens
+# of ways to code this same procedure.
+rows <- sample(nrow(data)) #creates randomized vector same length as data
+data_randomized <- data[rows,] #randomizes df to index from 'rows'
+split <- round(nrow(data)*.80) #creates index to split the file into 4/5 1/5, rounded
+train <- data_randomized[1:split,] #first 4/5 to train
+test <- data_randomized[(split+1):nrow(data),] #remaining 1/5 to test
 
-# First, we use the sample.split function to create a new 
-# (you reference a variable within a dataset with the $ symbol, here we are
-# creating a new one)
-data$split <- sample.split(data, SplitRatio=.8)
+# Now, we could simply dvelop our model on the train half and once we think
+# we've found something, run the identical model on the test split to see 
+# if it holds up. 
 
-train <- subset(data, data$split == TRUE)
-test <- subset(data, data$split == FALSE)
+# For example, a simple linear regression predicting IAT score from explicit race attitudes:
+summary(lm(data=train,D_biep.White_Good_all~att7))
+
+# This shows a significant positive relationship, as we might expect.
+# Does this hold on the test data? (ideally, you pre-register before this step)
+summary(lm(data=test,D_biep.White_Good_all~att7))
+
+# Unsurprisingly it holds, although some variability in the effect size.
+# Note this is the only model I ran so this is not really demonstrating
+# the protective power against p-hacking and false-positives. 
+
+# We also just repeated our same model, we didn't predict and test values.
+# You can do that like this:
+
+# Build the same model from above:
+model1 <- lm(data=train,D_biep.White_Good_all~att7)
+summary(model1) # same model, so same results
+
+p <- predict(model1, test)
+
+# This gives us a vector of point predictions for each observation in the test
+# set. Note this is an out-of-sample prediction - we're making predictions about
+# novel (to the computer, at least) data.
+
+# To give some idea for how well we did, we need to define error:
+error <- p - test$D_biep.White_Good_all # difference between our predicted IAT scores and the real scores
+sqrt(mean(error^2)) # computing RMSE (root mean squared error) which is generally a better definition
+
+# Note this returns NA. Why? Because at least one IAT score is NA, so it can't complete
+# the mean() call successfully. One solution is to simply ignore NA cases by adding 
+# na.rm = TRUE as an argument to the mean() function.
+sqrt(mean(error^2, na.rm=TRUE))
+
+# HOWEVER, in general you should avoid doing data-processing steps like this to only
+# the train or the test set. It risks allowing "leakage" between the training and test
+# sets, invalidating the "test" part, and may also create differences between
+# the training and test data that decreases performance of the model. A better method
+# would be to go back and anticipate this problem starting with our training data.
