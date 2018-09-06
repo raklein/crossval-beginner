@@ -167,7 +167,7 @@ summary(lm(data=test,D_biep.White_Good_all~att7))
 model1 <- lm(data=train,D_biep.White_Good_all~att7)
 summary(model1) # same model, so same results
 
-p <- predict(model1, test)
+p <- predict(model1, test) # note the "test" dataset must have all the columns used in train
 
 # This gives us a vector of point predictions for each observation in the test
 # set. Note this is an out-of-sample prediction - we're making predictions about
@@ -193,7 +193,8 @@ sqrt(mean(error^2, na.rm=TRUE))
 # k-folds validation. Basically, we repeat the train/test procedure 
 # multiple times and average the results.
 
-# The below script does 5 folds of validation. 
+# The below script does 5 folds of validation. method = "lm" indicates
+# we're using linear models, the same as we did in the hold-out example.
 
 model2 <- train(
   D_biep.White_Good_all ~ att7, data,
