@@ -212,4 +212,6 @@ print(model2)
 # package is a beginner package for machine learning. We could adapt
 # the above code to do many different kinds of machine learning pretty simply.
 # Not so bad!
-# At this point you're ready for some more advanced practice, try the other tutorials.
+# At this point you're ready for some more advanced practice, try the other tutorials
+# or experiment with this code by perhaps trying to find other variables that are better
+# predictors of implicit attitudes. Or, use your own data (this script should be fairly flexible)
