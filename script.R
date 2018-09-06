@@ -91,6 +91,7 @@ rm(result_example)
 # The first time you use a package you have to install it. After that,
 # it's a good practice to just comment out these lines.
 install.packages("tidyverse") # Collection of useful packages I always load
+install.packages("caret") # only needed for k-folds example
 
 # You also have to "load" the package into your active R session. You must
 # do this every time you start R. This is kind of a pain in the butt to do
@@ -99,6 +100,7 @@ install.packages("tidyverse") # Collection of useful packages I always load
 library("tidyverse")
 library("haven") # haven installs with tidyverse, but you have to load it separately.
 # Haven is used for reading spss/sas/stata data.
+library("caret")
 
 # Let's load a sample dataset. Here, we're assigning the result of the read_sav()
 # call to the object 'data'. read_sav() function reads in a .sav file
@@ -185,3 +187,28 @@ sqrt(mean(error^2, na.rm=TRUE))
 # sets, invalidating the "test" part, and may also create differences between
 # the training and test data that decreases performance of the model. A better method
 # would be to go back and anticipate this problem starting with our training data.
+
+## K-folds example
+# Now, rather than a true hold-out sample, another popular option is
+# k-folds validation. Basically, we repeat the train/test procedure 
+# multiple times and average the results.
+
+# The below script does 5 folds of validation. 
+
+model2 <- train(
+  D_biep.White_Good_all ~ att7, data,
+  method = "lm", na.action = na.omit,
+  trControl = trainControl(
+    method = "cv", number = 5,
+    verboseIter = TRUE
+  )
+)
+
+print(model2)
+
+# Note that the train() function we just used is part of the caret package.
+# Although we didn't do any machine learning in this script, the caret 
+# package is a beginner package for machine learning. We could adapt
+# the above code to do many different kinds of machine learning pretty simply.
+# Not so bad!
+# At this point you're ready for some more advanced practice, try the other tutorials.
