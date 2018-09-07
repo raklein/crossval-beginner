@@ -8,7 +8,9 @@
 # Text following the '#' symbol is "commented out", meaning these lines don't
 # actually run, they are only there for explanation.
 
-# I recommend installing and opening this script in R Studio
+# I recommend installing and opening this script in R Studio.
+# If you have problems running this script locally, there's a web
+# version you can run here: https://rstudio.cloud/project/66369
 
 # If you open the .Rproj file, that will automatically set your working
 # directory (e.g., it will tell R to look for files in the same folder as the
