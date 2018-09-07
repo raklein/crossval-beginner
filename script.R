@@ -89,9 +89,11 @@ rm(result_example)
 # for it.
 
 # The first time you use a package you have to install it. After that,
-# it's a good practice to just comment out these lines.
-install.packages("tidyverse") # Collection of useful packages I always load
-install.packages("caret") # only needed for k-folds example
+# it's a good practice to just comment out these lines. If you don't
+# have these packages, delete the "#" so they install.
+# NOTE: if you're using Rstudio cloud, you don't have to install these.
+#install.packages("tidyverse") # Collection of useful packages I always load
+#install.packages("caret") # only needed for k-folds example
 
 # You also have to "load" the package into your active R session. You must
 # do this every time you start R. This is kind of a pain in the butt to do
@@ -215,3 +217,8 @@ print(model2)
 # At this point you're ready for some more advanced practice, try the other tutorials
 # or experiment with this code by perhaps trying to find other variables that are better
 # predictors of implicit attitudes. Or, use your own data (this script should be fairly flexible)
+
+# Also, this code structure follows closely with the methods taught in
+# this DataCamp course: www.datacamp.com/courses/machine-learning-toolbox
+# you could easily pick up from here by following that course and get right
+# into machine learning.
