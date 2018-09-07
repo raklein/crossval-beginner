@@ -93,7 +93,7 @@ rm(result_example)
 # The first time you use a package you have to install it. After that,
 # it's a good practice to just comment out these lines. If you don't
 # have these packages, delete the "#" so they install.
-# NOTE: if you're using Rstudio cloud, you don't have to install these.
+# NOTE: if you're using Rstudio cloud, you probably don't have to install these.
 #install.packages("tidyverse") # Collection of useful packages I always load
 #install.packages("caret") # only needed for k-folds example
 
