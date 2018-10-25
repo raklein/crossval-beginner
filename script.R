@@ -92,10 +92,10 @@ rm(result_example)
 
 # The first time you use a package you have to install it. After that,
 # it's a good practice to just comment out these lines. If you don't
-# have these packages, delete the "#" so they install.
-# NOTE: if you're using Rstudio cloud, you probably don't have to install these.
-#install.packages("tidyverse") # Collection of useful packages I always load
-#install.packages("caret") # only needed for k-folds example
+# have these packages, remove the "#" so these install.packages lines run.
+
+#install.packages("tidyverse") # Collection of useful packages I always load.
+#install.packages("caret", dependencies = TRUE) # only needed for k-folds example.
 
 # You also have to "load" the package into your active R session. You must
 # do this every time you start R. This is kind of a pain in the butt to do
@@ -105,6 +105,14 @@ library("tidyverse")
 library("haven") # haven installs with tidyverse, but you have to load it separately.
 # Haven is used for reading spss/sas/stata data.
 library("caret")
+
+##TROUBLESHOOTING INSTALL:
+# If either of the above fail to install or load: 
+# 1) Update R (https://cran.r-project.org/) and R Studio (https://www.rstudio.com/products/rstudio/download/)
+# to the latest versions (update R first, then R studio), restart your computer, and re-try.
+# 2) If you get an error like "Error: package or namespace load failed for 'ggplot2'"
+# then install any indicated package separately. In the above example you would
+# run install.packages("ggplot2").
 
 # Let's load a sample dataset. Here, we're assigning the result of the read_sav()
 # call to the object 'data'. read_sav() function reads in a .sav file
@@ -141,7 +149,7 @@ glimpse(data)
 set.seed(1)
 
 # Here's a simple method to randomize train and test samples. This
-# exact method is the one DataCamp recommends, but there are dozens
+# exact method is modified from one DataCamp uses, but there are dozens
 # of ways to code this same procedure.
 rows <- sample(nrow(data)) #creates randomized vector same length as data
 data_randomized <- data[rows,] #randomizes df to index from 'rows'
