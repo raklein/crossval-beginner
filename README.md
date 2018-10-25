@@ -13,7 +13,7 @@ Working as of 9/7/2018, but RStudio Cloud is still in alpha.
 
 # To download and use on your local machine:
 
-1. Ensure you have the latest version of [R](https://cran.r-project.org/) AND [R Studio](https://www.rstudio.com/products/rstudio/download/#download) installed.
+1. Ensure you have the latest version of [R](https://cran.r-project.org/) AND [R Studio](https://www.rstudio.com/products/rstudio/download/#download) installed. (you have to install R first, then R Studio).
 2. Download this repository to your computer by clicking the green "Clone or Download" button above, download the .zip file, and unzip it to anywhere on your hard drive. (Git savvy folks can instead fork and clone the repo if they wish - ask Rick if you want a demonstration).
 3. Open crossvalidation-beginner.Rproj **in R Studio**, this will automatically set the working directory to wherever the .Rproj file ([more info on using R Project files](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)) is located on your hard drive.
 4. Open the r script script.R in R Studio (either double-click it in the "files" window of R Studio, or from your hard disc and select open in R Studio).
