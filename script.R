@@ -219,6 +219,12 @@ model2 <- train(
 
 print(model2)
 
+# Note that neither form of cross-validation actually changes your algorythm.
+# It only provides an estimate of out-of-sample performance. In fact,
+# at the end of k-folds the model discards the 'folds' and
+# re-fits the model using ALL of the data. Here's a longer explanation of this
+# common misconception: https://stats.stackexchange.com/questions/96026/final-model-prediction-using-k-fold-cross-validation-and-machine-learning-method
+
 # Note that the train() function we just used is part of the caret package.
 # Although we didn't do any machine learning in this script, the caret 
 # package is a beginner package for machine learning. We could adapt
