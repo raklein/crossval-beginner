@@ -145,7 +145,7 @@ glimpse(data)
 # is the enemy of reproducibility, you will get different numbers each time. 
 # In R, we fix this by setting a "seed", which forces R to use the same
 # randomization. Note that the number inside set.seed(1) can be changed, to
-# test how sensitive your particular randomization is. 
+# test how robust your particular randomization is. 
 set.seed(1)
 
 # Here's a simple method to randomize train and test samples. This
@@ -157,23 +157,39 @@ split <- round(nrow(data)*.80) #creates index to split the file into 4/5 1/5, ro
 train <- data_randomized[1:split,] #first 4/5 to train
 test <- data_randomized[(split+1):nrow(data),] #remaining 1/5 to test
 
-# Now, we could simply dvelop our model on the train half and once we think
-# we've found something, run the identical model on the test split to see 
-# if it holds up. 
+# Now, a very basic thing we could do is use the first partition of the data
+# to explore (e.g., check moderators, look for patterns) and then when
+# we think we've found something, we confirm that pattern in the unused partition
 
-# For example, a simple linear regression predicting IAT score from explicit race attitudes:
+# For example, a simple linear regression predicting IAT score from explicit race attitudes, using the 'train' data partition:
 summary(lm(data=train,D_biep.White_Good_all~att7))
 
 # This shows a significant positive relationship, as we might expect.
-# Does this hold on the test data? (ideally, you pre-register before this step)
+
+# Does this hold on the 'test' data?
+# (you might consider pre-registering before this step)
 summary(lm(data=test,D_biep.White_Good_all~att7))
 
-# Unsurprisingly it holds, although some variability in the effect size.
-# Note this is the only model I ran so this is not really demonstrating
-# the protective power against p-hacking and false-positives. 
+# Unsurprisingly we observe the same trend. This suggests that the pattern
+# we discovered in the first half of the data was probably not some fluke,
+# and we weren't capitalizing on fitting a model to idiosyncratic noise only 
+# present in the first set of data (e.g. "overfitting" the model)
 
-# We also just repeated our same model, we didn't predict and test values.
-# You can do that like this:
+# This isn't a great example of the protective power against false-positives
+# because I only ran a very basic model. But if you included several moderators,
+# and had flexibility in your data analysis, this is one way to test if you've
+# found a real effect or are capitalizing on chance.
+
+# Now, this isn't true cross-validation just yet. This is basically just a 
+# mini-replication study using the same data. We've only examined if a pattern
+# we observe in the first partition is also present in the second, confirmatory
+# partition (in this case, a significant, positive association between IAT and
+# explicit attitudes). 
+
+# To truly _predict_ we need to generate estimates about out-of-sample
+# observations (e.g., if a person's IAT score is XX, their explicit atitude is YY).
+
+# For linear regression, you can do that like this:
 
 # Build the same model from above:
 model1 <- lm(data=train,D_biep.White_Good_all~att7)
@@ -182,23 +198,34 @@ summary(model1) # same model, so same results
 p <- predict(model1, test) # note the "test" dataset must have all the columns used in train
 
 # This gives us a vector of point predictions for each observation in the test
-# set. Note this is an out-of-sample prediction - we're making predictions about
-# novel (to the computer, at least) data.
+# set. Whereas last time, we let the parameters of the regression change when
+# we re-fit the model on the confirmatory partition, here we are actually
+# predicting point-estimates for the out-of-sample data using the model we
+# built on the training data.
 
-# To give some idea for how well we did, we need to define error:
+# To evaluate how well this model predicts, we need to define error in some way.
+# Basically, define how we are going to evaluate our performance.
+# Here's one common metric:
 error <- p - test$D_biep.White_Good_all # difference between our predicted IAT scores and the real scores
 sqrt(mean(error^2)) # computing RMSE (root mean squared error) which is generally a better definition
 
-# Note this returns NA. Why? Because at least one IAT score is NA, so it can't complete
-# the mean() call successfully. One solution is to simply ignore NA cases by adding 
-# na.rm = TRUE as an argument to the mean() function.
+# Note this returns NA. Why? Because at least one IAT score is NA, so it can't 
+# complete the mean() call successfully. One solution is to simply ignore
+# NA cases by adding na.rm = TRUE as an argument to the mean() function.
+
+# HOWEVER, in general you should be careful about doing these sorts of 
+# data-processing steps to only the train or test set (instead do it to both in
+# advance before building your model). It risks allowing "leakage" between the
+# training and test sets, invalidating the confirmatory test, and may also
+# create differences between the training and test data that decreases
+# performance of the model. I do it here for simplicity:
 sqrt(mean(error^2, na.rm=TRUE))
 
-# HOWEVER, in general you should avoid doing data-processing steps like this to only
-# the train or the test set. It risks allowing "leakage" between the training and test
-# sets, invalidating the "test" part, and may also create differences between
-# the training and test data that decreases performance of the model. A better method
-# would be to go back and anticipate this problem starting with our training data.
+# How do we interpret this error term? It's a little hard on its own. The 
+# key intution to take away is that we have _some_ measure of error that 
+# we want to reduce. This allows us to re-tool our model and evaluate other
+# models against this one (the smaller the prediction error, the better
+# the performance of the model)
 
 ## K-folds example
 # Now, rather than a true hold-out sample, another popular option is
@@ -219,7 +246,7 @@ model2 <- train(
 
 print(model2)
 
-# Note that neither form of cross-validation actually changes your algorythm.
+# Note that neither form of cross-validation actually changes your algorithm.
 # It only provides an estimate of out-of-sample performance. In fact,
 # at the end of k-folds the model discards the 'folds' and
 # re-fits the model using ALL of the data. Here's a longer explanation of this
