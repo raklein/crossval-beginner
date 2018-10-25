@@ -15,6 +15,14 @@ Working as of 9/7/2018, but RStudio Cloud is still in alpha.
 
 1. Ensure you have the latest version of [R](https://cran.r-project.org/) AND [R Studio](https://www.rstudio.com/products/rstudio/download/#download) installed.
 2. Download this repository to your computer by clicking the green "Clone or Download" button above, download the .zip file, and unzip it to anywhere on your hard drive. (Git savvy folks can instead fork and clone the repo if they wish - ask Rick if you want a demonstration).
+<<<<<<< HEAD
 3. Open crossvalidation-beginner.Rproj **in R Studio**, this will automatically set the working directory to wherever the .Rproj file ([more info on using R Project files](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)) is located on your hard drive.
 4. Open the r script script.R in R Studio (either double-click it in the "files" window of R Studio, or from your hard disc and select open in R Studio).
 5. From here, you should be able to simply run the R script from start to finish. The only edit you may have to make is uncomment the 'install.packages()' lines - this is described in the script. I highly recommend running the code line-by-line and trying to understand what's going on. Don't heisitate to ask questions.
+=======
+3. Open crossvalidation-beginner.Rproj in R Studio, this will automatically set the working directory to wherever the .Rproj file ([more info on using R Project files](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects)) is located on your hard drive.
+4. Open the r script script.R in R Studio by double-clicking on it (either in the "files" window of R Studio, or from your hard disc and select open in R Studio).
+5. From here, you should be able to simply run the R script from start to finish without any edits. I highly recommend running the code line-by-line and trying to understand what's going on. Don't heisitate to ask questions.
+
+Contact me if you have any issues/comments and I'll help work through them.
+>>>>>>> 04d0c6ab14697f69d46cde5123a44320e31abcd9
